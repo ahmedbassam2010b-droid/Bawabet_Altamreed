@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="description"
+    content="تواصل مع مشروع NurseSim Egypt لإرسال الملاحظات والتصحيحات والمقترحات التعليمية."
+  >
+
+  <meta name="theme-color" content="#0b1728">
+
+  <title>تواصل معنا | NurseSim Egypt</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+</head>
+
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">N<span>+</span></span>
+      <span>NurseSim <b>Egypt</b></span>
+    </a>
+
+    <nav class="nav-links" aria-label="القائمة الرئيسية">
+      <a href="index.html">الرئيسية</a>
+      <a href="game.html">المحاكاة</a>
+      <a href="about.html">عن المشروع</a>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+
+    <header class="page-intro">
+      <div class="eyebrow">CONTACT</div>
+
+      <h1>خلّينا نحسّن التجربة.</h1>
+
+      <p>
+        عندك ملاحظة أو اقتراح أو تصحيح لمحتوى تعليمي؟
+        ابعتلنا رسالتك وساهم في تطوير NurseSim Egypt.
+      </p>
+    </header>
+
+    <section class="content-panel" aria-label="نموذج التواصل">
+
+      <form class="form-grid" id="contact-form">
+
+        <label for="sender-name">
+          الاسم (اختياري)
+
+          <input
+            id="sender-name"
+            name="name"
+            type="text"
+            maxlength="80"
+            autocomplete="name"
+            placeholder="اكتب اسمك"
+          >
+        </label>
+
+        <label for="sender-subject">
+          عنوان الرسالة
+
+          <input
+            id="sender-subject"
+            name="subject"
+            type="text"
+            maxlength="120"
+            required
+            placeholder="مثال: ملاحظة على إحدى الحالات"
+          >
+        </label>
+
+        <label for="sender-message">
+          الرسالة
+
+          <textarea
+            id="sender-message"
+            name="message"
+            maxlength="3000"
+            rows="6"
+            required
+            placeholder="اكتب ملاحظتك أو اقتراحك هنا..."
+          ></textarea>
+        </label>
+
+        <button class="button button-primary" type="submit">
+          فتح البريد لإرسال الرسالة
+        </button>
+
+      </form>
+
+      <p class="muted small-text">
+        سيتم فتح تطبيق البريد على جهازك لتراجع الرسالة وترسلها بنفسك.
+        لن يتم إرسال الرسالة تلقائيًا من الموقع.
+      </p>
+
+      <p
+        id="contact-status"
+        class="muted small-text"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+
+    <a class="brand" href="index.html">
+      <span class="brand-mark">N<span>+</span></span>
+      <span>NurseSim <b>Egypt</b></span>
+    </a>
+
+    <div class="footer-links">
+      <a href="about.html">عن المشروع</a>
+      <a href="privacy.html">الخصوصية</a>
+    </div>
+
+    <small>© NurseSim Egypt</small>
+
+  </footer>
+
+  <script>
+    "use strict";
+
+    const contactForm = document.getElementById("contact-form");
+    const contactStatus = document.getElementById("contact-status");
+
+    const recipient = "bawabet.altamreed@gmail.com";
+
+    contactForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const name = document.getElementById("sender-name").value.trim();
+      const subject = document.getElementById("sender-subject").value.trim();
+      const message = document.getElementById("sender-message").value.trim();
+
+      if (!subject || !message) {
+        contactStatus.textContent = "من فضلك اكتب عنوان الرسالة ومحتواها.";
+        return;
+      }
+
+      const body =
+        (name ? "الاسم: " + name + "\n\n" : "") +
+        "الرسالة:\n" + message +
+        "\n\n--------------------\n" +
+        "مرسلة من صفحة التواصل - NurseSim Egypt";
+
+      const mailtoUrl =
+        "mailto:" + recipient +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+
+      contactStatus.textContent =
+        "جارٍ فتح تطبيق البريد. راجع الرسالة واضغط إرسال لإيصالها.";
+
+      window.location.href = mailtoUrl;
+    });
+  </script>
+
+</body>
+</html>
