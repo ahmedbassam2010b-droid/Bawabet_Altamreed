@@ -35,6 +35,9 @@ function showHint(hint) {
 }
 
 function handleChoice(choice) {
+  totalScore += choice.score || 0;
+  if (totalScore < 0) totalScore = 0;
+
   currentStep = choice.next;
   ui.showFeedback(choice.feedback, (choice.score || 0) > 0);
 
