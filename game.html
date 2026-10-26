@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#071521">
+  <meta name="description" content="ابدأ أول نوبة تدريبية في NurseSim Egypt. استكشف المستشفى الافتراضي وتدرّب على اتخاذ القرارات التمريضية.">
+  <title>First Shift | NurseSim Egypt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    body { overflow-x: hidden; }
+    .game-shell { max-width: 1240px; margin: auto; padding: 18px; }
+    .game-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .game-top h1 { font-size:1.15rem; margin:0; }
+    .game-layout { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:14px; align-items:start; }
+    .scene-wrap { position:relative; min-width:0; overflow:hidden; border:1px solid var(--line); border-radius:18px; background:#08141d; }
+    #game-canvas { display:block; width:100%; height:min(66vh,620px); min-height:350px; touch-action:none; }
+    .scene-hud { position:absolute; inset:12px 12px auto; display:flex; justify-content:space-between; gap:8px; pointer-events:none; }
+    .hud-chip { background:#071521dd; border:1px solid #ffffff20; padding:7px 10px; border-radius:9px; font-size:.72rem; color:#e4f1f5; }
+    .scene-help { position:absolute; bottom:12px; right:12px; left:12px; text-align:center; color:#fff; background:#071521cc; border-radius:10px; padding:7px; font-size:.72rem; pointer-events:none; }
+    .game-side { border:1px solid var(--line); border-radius:18px; background:var(--panel); padding:18px; }
+    .game-side h2 { font-size:1.1rem; margin:0 0 8px; }
+    .game-side p { font-size:.87rem; color:var(--muted); }
+    .game-side .button { width:100%; margin-top:8px; }
+    .progress-track { height:6px; background:#ffffff12; border-radius:9px; overflow:hidden; margin:12px 0; }
+    #progress-bar { height:100%; width:0; background:var(--cyan); transition:width .3s; }
+    #message-box { padding:13px; border:1px solid var(--line); border-radius:12px; background:#071521; margin:14px 0; font-size:.88rem; }
+    #choice-list { display:grid; gap:9px; }
+    .choice-btn { text-align:right; padding:12px; border-radius:11px; border:1px solid var(--line); color:var(--text); background:#102837; cursor:pointer; }
+    .choice-btn:hover:not(:disabled) { border-color:var(--cyan); }
+    .choice-btn:disabled { opacity:.5; cursor:not-allowed; }
+    #feedback { font-size:.85rem; margin-top:12px; }
+    #feedback.good { color:var(--cyan); } #feedback.bad { color:var(--gold); }
+    .move-pad { display:none; position:absolute; bottom:58px; right:12px; gap:5px; grid-template-columns:repeat(3,42px); grid-template-rows:repeat(2,42px); }
+    .move-pad button, .look-btn { border:1px solid #ffffff35; background:#071521cc; color:white; border-radius:10px; font-size:1.1rem; touch-action:none; }
+    .move-pad button[data-dir="forward"] { grid-column:2; grid-row:1; }
+    .move-pad button[data-dir="left"] { grid-column:1; grid-row:2; }
+    .move-pad button[data-dir="back"] { grid-column:2; grid-row:2; }
+    .move-pad button[data-dir="right"] { grid-column:3; grid-row:2; }
+    .look-btn { display:none; position:absolute; bottom:65px; left:12px; width:65px; height:65px; font-size:.7rem; }
+    .interact-row { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:12px; }
+    .interact-row button { padding:10px 5px; border-radius:10px; border:1px solid var(--line); color:var(--text); background:#102837; }
+    .interact-row button:disabled { opacity:.45; }
+    .result-score { font-size:2rem; color:var(--cyan); font-weight:800; }
+    @media(max-width:850px) {
+      .game-layout { grid-template-columns:1fr; }
+      #game-canvas { height:56vh; min-height:340px; }
+      .game-side { padding:15px; }
+      .move-pad, .look-btn { display:grid; }
+      .look-btn { display:block; }
+    }
+    @media(max-width:420px) {
+      .game-shell { padding:10px; }
+      #game-canvas { min-height:320px; }
+      .game-top .button { padding:7px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell">
+    <header class="game-top">
+      <a class="brand" href="index.html"><span class="brand-mark">N<span>+</span></span><span>NurseSim <b>Egypt</b></span></a>
+      <a class="button button-small button-outline" href="index.html">← الرئيسية</a>
+    </header>
+
+    <div class="game-top">
+      <div><div class="eyebrow">SIMULATION 01</div><h1>First Shift — أول نوبة</h1></div>
+      <div class="hud-chip">وضع التدريب التعليمي</div>
+    </div>
+
+    <div class="game-layout">
+      <section class="scene-wrap" aria-label="المستشفى الافتراضي">
+        <canvas id="game-canvas" aria-label="مشهد المستشفى ثلاثي الأبعاد"></canvas>
+        <div class="scene-hud">
+          <span class="hud-chip" id="location-label">الممر الرئيسي</span>
+          <span class="hud-chip">WASD / لمس</span>
+        </div>
+        <div class="move-pad" aria-label="أزرار الحركة">
+          <button data-dir="forward" aria-label="للأمام">↑</button>
+          <button data-dir="left" aria-label="لليسار">←</button>
+          <button data-dir="back" aria-label="للخلف">↓</button>
+          <button data-dir="right" aria-label="لليمين">→</button>
+        </div>
+        <button class="look-btn" id="look-mode" aria-label="تبديل التحكم بالنظر">تحريك النظر</button>
+        <div class="scene-help" id="scene-help">تحرك واستكشف المكان، ثم اضغط على زر التفاعل عند الاقتراب من شيء.</div>
+      </section>
+
+      <aside class="game-side">
+        <div class="eyebrow">YOUR FIRST CASE</div>
+        <h2 id="case-title">بداية النوبة</h2>
+        <div class="progress-track"><div id="progress-bar"></div></div>
+        <p id="step-label">الخطوة 1</p>
+        <div id="message-box" aria-live="polite">
+          أنت طالب تمريض في نوبة تدريبية تحت الإشراف. ابدأ بالتعرف على المكان، ثم اتبع التعليمات داخل السيناريو.
+        </div>
+        <div id="choice-list"></div>
+        <div id="feedback" aria-live="polite"></div>
+        <div class="interact-row">
+          <button id="interact-btn" type="button">تفاعل مع المكان</button>
+          <button id="hint-btn" type="button">تلميح</button>
+        </div>
+        <button id="restart-btn" class="button button-outline" type="button">إعادة الحالة</button>
+        <p class="small-text">المواقف والشخصيات افتراضية. لا تستخدم المحاكاة لاتخاذ قرار علاجي لمريض حقيقي.</p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
