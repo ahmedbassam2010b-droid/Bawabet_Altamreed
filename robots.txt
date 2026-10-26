@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://YOUR-USERNAME.github.io/Bawabet_Altamreed/sitemap.xml
+Sitemap: https://ahmedbassam2010b-droid.github.io/Bawabet_Altamreed/sitemap.xml
